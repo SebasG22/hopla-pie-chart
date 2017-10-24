@@ -1,10 +1,29 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+
+// Services
+import { PieDataService } from './_services/pie-data.service';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.scss'],
+  template: `
+  <div class='card'>
+    <app-pie-chart [data]='data' [colours]='colours'></app-pie-chart>
+  </div>
+  `
 })
-export class AppComponent {
-  title = 'app';
+export class AppComponent implements OnInit {
+  data: Array<any>;
+  private colours = ['#57A1C6', '#4FC3F7', '#36D7B7'];
+
+  constructor(
+    private pieDataService: PieDataService
+  ) {}
+
+  ngOnInit() {
+    this.data = this.pieDataService.generateData(30);
+    setInterval(() => {
+      this.data = this.pieDataService.generateData(10);
+    }, 4000);
+  }
 }
