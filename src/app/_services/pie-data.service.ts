@@ -7,7 +7,7 @@ export class PieDataService {
     const labels = ['DeviceQuery', 'DatabaseQuery', 'APIQuery'];
     const types = ['SnmpV1', 'SnmpV2c', 'SnmpV3', 'HttpApi', 'HttpBasic', 'SshBasic', 'SshRsa', 'Wmi', 'Sql', 'MongoDb'];
 
-    for (let i = 0; i < Math.floor(Math.random() * num); i++) {
+    for (let i = 0; i < Math.floor(1 + Math.random() * num); i++) {
       const operation = {
         id: i,
         familyType: labels[Math.floor(Math.random() * labels.length)],

@@ -14,7 +14,7 @@ import { PieDataService } from './_services/pie-data.service';
 })
 export class AppComponent implements OnInit {
   data: Array<any>;
-  private colours = ['#57A1C6', '#4FC3F7', '#36D7B7'];
+  colours = ['#57A1C6', '#4FC3F7', '#36D7B7'];
 
   constructor(
     private pieDataService: PieDataService

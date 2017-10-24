@@ -40,9 +40,7 @@ import * as _ from 'underscore';
 export class PieChartComponent implements OnInit, OnChanges {
   @ViewChild('containerPieChart') private chartContainer: ElementRef;
   @Input() private data: any;
-  // TODO: ATM colours isn't optionnal as we need it to create the legend.
-  // If we moved the legend to a SVG object it could be optionnal
-  @Input() public colours: Array<string>;
+  @Input() private colours: Array<string>;
 
   private hostElement: any;
   private svg: any;
@@ -62,6 +60,9 @@ export class PieChartComponent implements OnInit, OnChanges {
   private slices: Array<any>;
   public selectedSlice: any;
   public colourSlices: Array<string>;
+
+  private arc: any;
+  private arcEnter: any;
 
   constructor(
     private elRef: ElementRef
@@ -91,7 +92,7 @@ export class PieChartComponent implements OnInit, OnChanges {
     const innerRadius = this.radius - 80;
     const outerRadius = this.radius - 15;
     const hoverRadius = this.radius - 5;
-    this.pieColours = d3.scaleOrdinal().range(this.colours);
+    this.pieColours = this.colours ? d3.scaleOrdinal().range(this.colours) : d3.scaleOrdinal(d3.schemeCategory20c);
     this.tooltip = this.elRef.nativeElement.querySelector('.tooltip');
 
     // create a pie generator and tell it where to get numeric values from and whether sorting is needed or not
@@ -113,19 +114,6 @@ export class PieChartComponent implements OnInit, OnChanges {
       .attr('viewBox', '0, 0, ' + this.hostElement.offsetWidth + ', ' + this.hostElement.offsetHeight)
       .append('g')
       .attr('transform', `translate(${this.hostElement.offsetWidth / 2}, ${this.hostElement.offsetHeight / 2})`);
-
-    const arc = this.svg.selectAll('arc')
-      .data(this.pieGenerator);
-
-    const arcEnter = arc.enter()
-      .append('g')
-      .attr('class', 'arc');
-
-    arcEnter.append('path')
-     .attr('d', this.arcGenerator)
-     .each((values) => values.storedValues = values)
-     .on('mouseover', this.mouseover)
-     .on('mouseout', this.mouseout);
   }
 
   updateChart = (firstRun: boolean) => {
@@ -139,6 +127,20 @@ export class PieChartComponent implements OnInit, OnChanges {
 
     this.pieGenerator = d3.pie().sort(null).value((d: number) => d)(this.values);
 
+    const arc = this.svg.selectAll('.arc')
+      .data(this.pieGenerator);
+
+    arc.exit().remove();
+
+    const arcEnter = arc.enter().append('g')
+      .attr('class', 'arc');
+
+    arcEnter.append('path')
+      .attr('d', this.arcGenerator)
+      .each((values) => firstRun ? values.storedValues = values : null)
+      .on('mouseover', this.mouseover)
+      .on('mouseout', this.mouseout);
+
     // configure a transition to play on d elements of a path
     // whenever new values are passed in, the values and the previously stored values will be used
     // to compute the transition using interpolation
@@ -151,7 +153,6 @@ export class PieChartComponent implements OnInit, OnChanges {
       .attrTween('d', function(newValues, i){
         return vm.arcTween(newValues, i, this);
       });
-
   }
 
   arcTween(newValues, i, slice) {
