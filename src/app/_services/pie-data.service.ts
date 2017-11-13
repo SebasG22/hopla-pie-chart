@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 export class PieDataService {
   generateData = (num: number) => {
     const operations = [];
-    const labels = ['DeviceQuery', 'DatabaseQuery', 'APIQuery'];
+    const labels = ['Devices', 'Database', 'API'];
     const types = ['SnmpV1', 'SnmpV2c', 'SnmpV3', 'HttpApi', 'HttpBasic', 'SshBasic', 'SshRsa', 'Wmi', 'Sql', 'MongoDb'];
 
     for (let i = 0; i < Math.floor(1 + Math.random() * num); i++) {

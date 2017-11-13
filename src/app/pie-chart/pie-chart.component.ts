@@ -9,6 +9,7 @@ import * as _ from 'underscore';
     template: `
       <div class='wrapper'>
         <div class='pie-chart' #containerPieChart></div>
+
         <div *ngIf='labels'class='legend' fxLayout='row' fxLayoutAlign='center center'>
           <div *ngFor='let label of labels; let i = index' fxLayout='row' fxLayoutAlign='start center' class='item'>
             <div class='circle' [ngStyle]='{"background": colourSlices[i]}'></div>
@@ -19,7 +20,7 @@ import * as _ from 'underscore';
         <div class='tooltip drilldownData'>
           <div class='header' *ngIf='selectedSlice'>
             <div fxLayout='row' fxLayoutAlign='start center'>
-              <img src='assets/Icon-Database.svg' alt='Database Icon'>
+              <img [src]='"assets/Icon-" + selectedSlice.familyType + ".svg"' alt='Database Icon'>
               <div fxLayout='column' fxLayoutAlign='center start'>
                 <div class='title'>{{selectedSlice.familyType}}</div>
                 <div>Queries</div>
@@ -38,31 +39,30 @@ import * as _ from 'underscore';
 })
 
 export class PieChartComponent implements OnInit, OnChanges {
-  @ViewChild('containerPieChart') private chartContainer: ElementRef;
-  @Input() private data: any;
-  @Input() private colours: Array<string>;
+  @ViewChild('containerPieChart') chartContainer: ElementRef;
+  @Input() data: any;
+  @Input() colours: Array<string>;
 
-  private hostElement: any;
-  private svg: any;
-  private radius: number;
-  private innerRadius: number;
-  private outerRadius: number;
-  private htmlElement: HTMLElement;
-  private arcGenerator: any;
-  private arcHover: any;
-  private pieGenerator: any;
-  private path: any;
-  private values: Array<number>;
-  public labels: Array<string>;
-  private tooltip: any;
-  private centralLabel: any;
-  private pieColours: any;
-  private slices: Array<any>;
-  public selectedSlice: any;
-  public colourSlices: Array<string>;
-
-  private arc: any;
-  private arcEnter: any;
+  hostElement: any;
+  svg: any;
+  radius: number;
+  innerRadius: number;
+  outerRadius: number;
+  htmlElement: HTMLElement;
+  arcGenerator: any;
+  arcHover: any;
+  pieGenerator: any;
+  path: any;
+  values: Array<number>;
+  labels: Array<string>;
+  tooltip: any;
+  centralLabel: any;
+  pieColours: any;
+  slices: Array<any>;
+  selectedSlice: any;
+  colourSlices: Array<string>;
+  arc: any;
+  arcEnter: any;
 
   constructor(
     private elRef: ElementRef
