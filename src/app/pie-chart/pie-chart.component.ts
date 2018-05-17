@@ -4,38 +4,9 @@ import { SumPipe } from '../_pipes/sum.pipe';
 import * as _ from 'underscore';
 
 @Component({
-    selector: 'app-pie-chart',
-    styleUrls: ['./pie-chart.component.scss'],
-    template: `
-      <div class='wrapper'>
-        <div class='pie-chart' #containerPieChart></div>
-
-        <div *ngIf='labels'class='legend' fxLayout='row' fxLayoutAlign='center center'>
-          <div *ngFor='let label of labels; let i = index' fxLayout='row' fxLayoutAlign='start center' class='item'>
-            <div class='circle' [ngStyle]='{"background": colourSlices[i]}'></div>
-            <div>{{label}}</div>
-          </div>
-        </div>
-
-        <div class='tooltip drilldownData'>
-          <div class='header' *ngIf='selectedSlice'>
-            <div fxLayout='row' fxLayoutAlign='start center'>
-              <img [src]='"assets/Icon-" + selectedSlice.familyType + ".svg"' alt='Database Icon'>
-              <div fxLayout='column' fxLayoutAlign='center start'>
-                <div class='title'>{{selectedSlice.familyType}}</div>
-                <div>Queries</div>
-              </div>
-            </div>
-          </div>
-          <div class='body' fxLayout='row' fxLayoutWrap *ngIf='selectedSlice'>
-            <div *ngFor='let item of selectedSlice.types' class='item' fxFlex="50%">
-              <div class='label'>{{item.type}}</div>
-              <div class='value'>{{item.amount}}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    `
+  selector: 'app-pie-chart',
+  styleUrls: ['./pie-chart.component.scss'],
+  templateUrl: 'pie-chart.component.html'
 })
 
 export class PieChartComponent implements OnInit, OnChanges {
@@ -66,7 +37,7 @@ export class PieChartComponent implements OnInit, OnChanges {
 
   constructor(
     private elRef: ElementRef
-  ) {}
+  ) { }
 
   ngOnInit() {
     // create chart and render
@@ -81,7 +52,7 @@ export class PieChartComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     // update chart on data input value change
-    if (this.svg) this.updateChart(false);
+    // if (this.svg) this.updateChart(false);
   }
 
   createChart = () => {
@@ -150,7 +121,7 @@ export class PieChartComponent implements OnInit, OnChanges {
       .attr('d', this.arcGenerator)
       .transition()
       .duration(750)
-      .attrTween('d', function(newValues, i){
+      .attrTween('d', function (newValues, i) {
         return vm.arcTween(newValues, i, this);
       });
   }
@@ -189,7 +160,7 @@ export class PieChartComponent implements OnInit, OnChanges {
     this.tooltip.style.visibility = 'visible';
     this.tooltip.style.opacity = 0.9;
     this.tooltip.style.top = (d3.event.pageY) + 'px';
-    this.tooltip.style.left = (d3.event.pageX - 100 ) + 'px';
+    this.tooltip.style.left = (d3.event.pageX - 100) + 'px';
   }
 
   mouseout = () => {
@@ -197,15 +168,15 @@ export class PieChartComponent implements OnInit, OnChanges {
     this.svg.select('.percent').remove();
 
     d3.select(d3.event.currentTarget).transition()
-     .duration(100)
-     .attr('d', this.arcGenerator);
+      .duration(100)
+      .attr('d', this.arcGenerator);
 
     this.tooltip.style.visibility = 'hidden';
     this.tooltip.style.opacity = 0;
   }
 
   toPercent = (a: number, b: number): string => {
-    return Math.round( a / b * 100) + '%';
+    return Math.round(a / b * 100) + '%';
   }
 
   updateSlices = (newData: Array<any>): Array<any> => {

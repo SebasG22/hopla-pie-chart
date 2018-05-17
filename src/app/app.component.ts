@@ -18,10 +18,11 @@ export class AppComponent implements OnInit {
 
   constructor(
     private pieDataService: PieDataService
-  ) {}
+  ) { }
 
   ngOnInit() {
-    this.data = this.pieDataService.generateData(30);
+    this.data = this.pieDataService.generateData(200);
+    console.log(this.data);
     setInterval(() => {
       this.data = this.pieDataService.generateData(30);
     }, 4000);
