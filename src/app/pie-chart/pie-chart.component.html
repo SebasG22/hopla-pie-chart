@@ -3,18 +3,17 @@
 
   <div *ngIf='labels' class='legend' fxLayout='row' fxLayoutAlign='center center'>
     <div *ngFor='let label of labels; let i = index' fxLayout='row' fxLayoutAlign='start center' class='item'>
-      <div class='circle' [ngStyle]='{"background": colourSlices[i]}'></div>
-      <div>{{label}} Numero de Solicitudes</div>
+      <div class='circle' [ngStyle]='{"background": getColor(label)}'></div>
+      <div>{{label}} </div>
     </div>
   </div>
 
   <div class='tooltip drilldownData'>
     <div class='header' *ngIf='selectedSlice'>
       <div fxLayout='row' fxLayoutAlign='start center'>
-        <img [src]='"assets/Icon-" + selectedSlice.familyType + ".svg"' alt='Database Icon'>
+        <!-- <img [src]='"assets/Icon-" + selectedSlice.familyType + ".svg"' alt='Database Icon'> -->
         <div fxLayout='column' fxLayoutAlign='center start'>
-          <div class='title'>{{selectedSlice.familyType}} Selected</div>
-          <div>Queries</div>
+          <div class='title'>Estado : {{selectedSlice.state}}</div>
         </div>
       </div>
     </div>

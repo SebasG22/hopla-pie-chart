@@ -63,6 +63,7 @@ export class PieChartComponent implements OnInit, OnChanges {
     const innerRadius = this.radius - 80;
     const outerRadius = this.radius - 15;
     const hoverRadius = this.radius - 5;
+    //this.pieColours = this.colours ? d3.scaleOrdinal().range(this.colours) : d3.scaleOrdinal(d3.schemeCategory20c);
     this.pieColours = this.colours ? d3.scaleOrdinal().range(this.colours) : d3.scaleOrdinal(d3.schemeCategory20c);
     this.tooltip = this.elRef.nativeElement.querySelector('.tooltip');
 
@@ -91,17 +92,20 @@ export class PieChartComponent implements OnInit, OnChanges {
       .style('text-anchor', 'middle')
       .attr('class', 'total')
       .attr('fill', '#57a1c6')
-      .text('Total');
+      .text(this.data.length);
   }
 
   updateChart = (firstRun: boolean) => {
     const vm = this;
 
-    this.slices = this.updateSlices(this.data);
-    this.labels = this.slices.map(slice => slice.familyType);
-    this.colourSlices = this.slices.map(slice => this.pieColours(slice.familyType));
+    this.slices = this.countRequestByStates(this.data);
+    this.labels = this.countRequestByStates(this.data).map(slice => slice.state);
+    console.log('Slices', this.countRequestByStates(this.data));
+    console.log('Labels', this.labels);
 
     this.values = firstRun ? [0, 0, 0] : _.toArray(this.slices).map(slice => slice.amount);
+
+    console.log('Values', this.values);
 
     this.pieGenerator = d3.pie().sort(null).value((d: number) => d)(this.values);
 
@@ -122,9 +126,15 @@ export class PieChartComponent implements OnInit, OnChanges {
     // configure a transition to play on d elements of a path
     // whenever new values are passed in, the values and the previously stored values will be used
     // to compute the transition using interpolation
+
+    console.log('Pie generator', this.pieGenerator);
     d3.select(this.hostElement).selectAll('path')
       .data(this.pieGenerator)
-      .attr('fill', (datum, index) => this.pieColours(this.labels[index]))
+      .attr('fill', (datum, index) => {
+        console.log('index', index, 'labels', this.labels);
+        console.log('Pipe Colors Match', this.pieColours(this.getColor(this.labels[index])));
+        return this.getColor(this.labels[index]);
+      })
       .attr('d', this.arcGenerator)
       .transition()
       .duration(750)
@@ -164,7 +174,7 @@ export class PieChartComponent implements OnInit, OnChanges {
       .text(this.toPercent(this.values[i], new SumPipe().transform(this.values)));
 
     this.svg.select('.total').remove();
-
+    this.svg.select('.labelTotal').remove();
 
 
     // Tooltip
@@ -179,11 +189,20 @@ export class PieChartComponent implements OnInit, OnChanges {
     this.svg.select('.percent').remove();
 
     this.svg.append('text')
+      .attr('dy', '-10px')
+      .style('text-anchor', 'middle')
+      .attr('class', 'labelTotal')
+      .attr('fill', '#57a1c6')
+      .text('Solicitudes Totales');
+
+    this.svg.append('text')
       .attr('dy', '20px')
       .style('text-anchor', 'middle')
       .attr('class', 'total')
       .attr('fill', '#57a1c6')
-      .text('Total');
+      .text(this.data.length);
+
+    console.warn(this.data.length);
 
     d3.select(d3.event.currentTarget).transition()
       .duration(100)
@@ -222,5 +241,61 @@ export class PieChartComponent implements OnInit, OnChanges {
     });
 
     return results;
+  }
+
+  countRequestByStates = (newData: Array<any>): Array<any> => {
+    const queriesByStates = _.groupBy(_.sortBy(newData, 'state'), 'state');
+    const results = [];
+
+    Object.keys(queriesByStates).map((state) => {
+      results.push({
+        state: state,
+        amount: queriesByStates[state].length,
+        color: this.getColor(state)
+      });
+    });
+
+    return results;
+  }
+
+  public getColor(state) {
+    let colours = [
+      {
+        "state": "A",
+        "color": "#000"
+      },
+      {
+        "state": "O",
+        "color": "#ff0059"
+      },
+      {
+        "state": "P",
+        "color": "#72c245"
+      },
+      {
+        "state": "D",
+        "color": "#46bfb0"
+      },
+      {
+        "state": "C",
+        "color": "#8b7d7b"
+      },
+      {
+        "state": "PL",
+        "color": "#fdd32b"
+      },
+      {
+        "state": "X",
+        "color": "#f7d4d4"
+      }
+    ]
+
+    let item = colours.filter((item) => item.state === state)[0];
+    console.log('colors', state, item);
+    if (state) {
+      return item.color;
+    }
+    return '#f8f8f8';
+    //return (item.color !== undefined) ? item.color : '#f8f8f8';
   }
 }
