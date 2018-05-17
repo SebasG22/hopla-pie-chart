@@ -85,6 +85,13 @@ export class PieChartComponent implements OnInit, OnChanges {
       .attr('viewBox', '0, 0, ' + this.hostElement.offsetWidth + ', ' + this.hostElement.offsetHeight)
       .append('g')
       .attr('transform', `translate(${this.hostElement.offsetWidth / 2}, ${this.hostElement.offsetHeight / 2})`);
+
+    this.svg.append('text')
+      .attr('dy', '20px')
+      .style('text-anchor', 'middle')
+      .attr('class', 'total')
+      .attr('fill', '#57a1c6')
+      .text('Total');
   }
 
   updateChart = (firstRun: boolean) => {
@@ -156,6 +163,10 @@ export class PieChartComponent implements OnInit, OnChanges {
       .attr('fill', '#57a1c6')
       .text(this.toPercent(this.values[i], new SumPipe().transform(this.values)));
 
+    this.svg.select('.total').remove();
+
+
+
     // Tooltip
     this.tooltip.style.visibility = 'visible';
     this.tooltip.style.opacity = 0.9;
@@ -166,6 +177,13 @@ export class PieChartComponent implements OnInit, OnChanges {
   mouseout = () => {
     this.svg.select('.label').remove();
     this.svg.select('.percent').remove();
+
+    this.svg.append('text')
+      .attr('dy', '20px')
+      .style('text-anchor', 'middle')
+      .attr('class', 'total')
+      .attr('fill', '#57a1c6')
+      .text('Total');
 
     d3.select(d3.event.currentTarget).transition()
       .duration(100)
